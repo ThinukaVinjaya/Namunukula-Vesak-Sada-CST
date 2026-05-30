@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Vesak Lantern | AR Vesak Zone</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@500;700;800&family=Outfit:wght@300;400;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Additional sub-page styles to avoid cluttering main style.css */
+        .subpage-container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 1200px;
+            padding: 100px 20px 40px 20px;
+            display: flex;
+            gap: 40px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .back-btn-container {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            z-index: 100;
+        }
+
+        .back-btn {
+            background: rgba(13, 6, 26, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 12px 24px;
+            border-radius: 50px;
+            color: #ffffff;
+            font-family: var(--font-sans);
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .back-btn:hover {
+            transform: translateX(-5px);
+            border-color: var(--color-amber-gold);
+            box-shadow: 0 0 15px rgba(255, 170, 0, 0.2);
+            color: var(--color-amber-gold);
+        }
+
+        /* 3D Lantern Viewer Panel */
+        .viewer-card {
+            flex: 1.2;
+            min-width: 320px;
+            max-width: 600px;
+            aspect-ratio: 1;
+            background: var(--glass-bg);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 28px;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        #3d-lantern-canvas {
+            width: 100%;
+            height: 100%;
+            border-radius: 20px;
+        }
+
+        /* Controls Panel */
+        .controls-card {
+            flex: 0.8;
+            min-width: 320px;
+            max-width: 450px;
+            background: var(--glass-bg);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 28px;
+            padding: 40px 35px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        .section-subtitle {
+            font-family: var(--font-tech);
+            color: var(--color-amber-gold);
+            font-size: 0.9rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .section-title {
+            font-family: var(--font-sinhala);
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(180deg, #fff, #ffeaa8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .controls-description {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .control-group {
+            margin-bottom: 25px;
+        }
+
+        .control-label {
+            font-family: var(--font-sans);
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #ffffff;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .control-label span:nth-child(2) {
+            color: var(--color-amber-gold);
+        }
+
+        /* Interactive color picker options */
+        .color-options {
+            display: flex;
+            gap: 12px;
+        }
+
+        .color-bubble {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.2);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+        }
+
+        .color-bubble:hover {
+            transform: scale(1.15);
+            border-color: #fff;
+        }
+
+        .color-bubble.active {
+            border-color: #fff;
+            transform: scale(1.1);
+            box-shadow: 0 0 15px currentColor;
+        }
+
+        /* Sliders */
+        .slider-input {
+            width: 100%;
+            -webkit-appearance: none;
+            background: rgba(255,255,255,0.08);
+            height: 6px;
+            border-radius: 5px;
+            outline: none;
+            transition: background 0.3s;
+        }
+
+        .slider-input::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--color-amber-gold);
+            cursor: pointer;
+            box-shadow: 0 0 8px var(--color-amber-gold);
+            transition: transform 0.1s;
+        }
+
+        .slider-input::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        /* Quick Info Box */
+        .info-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 30px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .info-box i {
+            color: var(--color-amber-gold);
+            font-size: 1.1rem;
+            margin-top: 2px;
+        }
+
+        .ar-trigger-btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--color-amber-gold) 0%, var(--color-warm-orange) 100%);
+            border: none;
+            border-radius: 14px;
+            padding: 16px;
+            color: #000;
+            font-family: var(--font-tech);
+            font-weight: 700;
+            font-size: 1rem;
+            letter-spacing: 0.1em;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(255, 170, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .ar-trigger-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(255, 170, 0, 0.5);
+            filter: brightness(1.1);
+        }
+
+        /* Modal styling for AR Scan */
+        .ar-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1000;
+            background: rgba(8, 3, 20, 0.85);
+            backdrop-filter: blur(15px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .ar-modal.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .ar-modal-card {
+            background: rgba(18, 9, 36, 0.95);
+            border: 1px solid rgba(255, 170, 0, 0.3);
+            border-radius: 28px;
+            max-width: 420px;
+            width: 90%;
+            padding: 40px 30px;
+            text-align: center;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+            transform: scale(0.9);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .ar-modal.active .ar-modal-card {
+            transform: scale(1);
+        }
+
+        .qr-placeholder {
+            width: 220px;
+            height: 220px;
+            background: #fff;
+            border-radius: 16px;
+            margin: 25px auto;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 20px rgba(255, 170, 0, 0.2);
+            position: relative;
+        }
+
+        .qr-placeholder img {
+            width: 100%;
+            height: 100%;
+        }
+
+        .qr-glow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 16px;
+            box-shadow: 0 0 30px rgba(255, 170, 0, 0.25);
+            pointer-events: none;
+        }
+
+        .close-modal-btn {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #fff;
+            border-radius: 10px;
+            padding: 10px 20px;
+            margin-top: 15px;
+            font-family: var(--font-sans);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .close-modal-btn:hover {
+            background: rgba(255,255,255,0.15);
+            border-color: #fff;
+        }
+
+        @media (max-width: 968px) {
+            .subpage-container {
+                padding-top: 90px;
+                flex-direction: column;
+            }
+            .viewer-card {
+                max-width: 100%;
+                width: 100%;
+                aspect-ratio: 1.1;
+            }
+            .controls-card {
+                max-width: 100%;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Back Navigation Button -->
+    <div class="back-btn-container">
+        <a href="index.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+            <span>Home</span>
+        </a>
+    </div>
+
+    <!-- Celestial Stars and Background -->
+    <div class="celestial-background">
+        <div id="stars-container"></div>
+        <div class="moon-glow-container">
+            <div class="full-moon"></div>
+            <div class="moon-beams"></div>
+        </div>
+    </div>
+
+    <!-- Subpage Main Content -->
+    <div class="subpage-container">
+        
+        <!-- Left Panel: Interactive 3D Canvas -->
+        <div class="viewer-card">
+            <canvas id="3d-lantern-canvas"></canvas>
+        </div>
+
+        <!-- Right Panel: Interactive Controllers -->
+        <div class="controls-card">
+            <span class="section-subtitle">Augmented Reality Experience</span>
+            <h2 class="section-title">වෙසක් කූඩුව AR</h2>
+            
+            <p class="controls-description">
+                නමුණුකුල වෙසක් කලාපයේ ප්‍රධාන ආකෘතියක් වන මෙම සාම්ප්‍රදායික වෙසක් කූඩුවෙහි වර්ණ රටාවන් ඔබේ මනාපය අනුව වෙනස් කර ත්‍රිමාණව නරඹන්න.
+            </p>
+
+            <!-- Controller 1: Color Themes -->
+            <div class="control-group">
+                <div class="control-label">
+                    <span>Color Theme (වර්ණ තේමාව)</span>
+                    <span id="theme-display-label">Golden Glow</span>
+                </div>
+                <div class="color-options">
+                    <div class="color-bubble active" style="background: #ffaa00; color: #ffaa00;" data-theme="golden" title="Golden Glow"></div>
+                    <div class="color-bubble" style="background: #e91e63; color: #e91e63;" data-theme="aurora" title="Aurora Crimson"></div>
+                    <div class="color-bubble" style="background: #00e5ff; color: #00e5ff;" data-theme="cyber" title="Cyber Cyan"></div>
+                    <div class="color-bubble" style="background: #9c27b0; color: #9c27b0;" data-theme="cosmic" title="Cosmic Violet"></div>
+                </div>
+            </div>
+
+            <!-- Controller 2: Rotation Speed -->
+            <div class="control-group">
+                <div class="control-label">
+                    <span>Rotation Speed (කැරකෙන වේගය)</span>
+                    <span id="speed-val">1.0x</span>
+                </div>
+                <input type="range" min="0" max="30" value="10" class="slider-input" id="rotation-speed-slider">
+            </div>
+
+            <!-- Controller 3: Glow Intensity -->
+            <div class="control-group">
+                <div class="control-label">
+                    <span>Glow Intensity (දීප්තිය)</span>
+                    <span id="glow-val">High</span>
+                </div>
+                <input type="range" min="2" max="8" value="5" class="slider-input" id="glow-intensity-slider">
+            </div>
+
+            <!-- Interactive AR Trigger Button -->
+            <button class="ar-trigger-btn" id="ar-modal-btn">
+                <i class="fas fa-cube"></i>
+                <span>VIEW IN AR (Augmented Reality)</span>
+            </button>
+
+            <!-- Info Box -->
+            <div class="info-box">
+                <i class="fas fa-info-circle"></i>
+                <div>
+                    <strong>Interactive Tip:</strong> Click and drag inside the left screen to rotate the lantern in 3D perspective! Scroll or pinch to zoom.
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- AR QR Scanner Modal -->
+    <div class="ar-modal" id="ar-modal">
+        <div class="ar-modal-card">
+            <span class="section-subtitle">AR Projection</span>
+            <h3 class="section-title" style="font-size: 1.8rem; margin-top:5px;">Scan to View in AR</h3>
+            <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5;">
+                Scan this QR code with your mobile camera or AR scanner to project the custom glowing Vesak Lantern directly into your room!
+            </p>
+            
+            <div class="qr-placeholder">
+                <div class="qr-glow"></div>
+                <!-- Dynamic SVG QR design for visual elegance -->
+                <svg width="100%" height="100%" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="5" y="5" width="25" height="25" stroke="#ffaa00" stroke-width="4" fill="none"/>
+                    <rect x="10" y="10" width="15" height="15" fill="#ffaa00"/>
+                    <rect x="70" y="5" width="25" height="25" stroke="#ffaa00" stroke-width="4" fill="none"/>
+                    <rect x="75" y="10" width="15" height="15" fill="#ffaa00"/>
+                    <rect x="5" y="70" width="25" height="25" stroke="#ffaa00" stroke-width="4" fill="none"/>
+                    <rect x="10" y="75" width="15" height="15" fill="#ffaa00"/>
+                    
+                    <!-- Decorative AR marker details in center -->
+                    <circle cx="50" cy="50" r="8" fill="#ffaa00"/>
+                    <rect x="42" y="48" width="16" height="4" fill="#ffaa00" transform="rotate(45 50 50)"/>
+                    <rect x="42" y="48" width="16" height="4" fill="#ffaa00" transform="rotate(-45 50 50)"/>
+                    
+                    <!-- Scattered tech blocks resembling a QR code -->
+                    <rect x="40" y="10" width="8" height="8" fill="#ffaa00" opacity="0.8"/>
+                    <rect x="52" y="15" width="12" height="6" fill="#ffaa00" opacity="0.9"/>
+                    <rect x="15" y="40" width="8" height="12" fill="#ffaa00" opacity="0.75"/>
+                    <rect x="45" y="70" width="10" height="10" fill="#ffaa00" opacity="0.85"/>
+                    <rect x="70" y="45" width="12" height="12" fill="#ffaa00" opacity="0.9"/>
+                    <rect x="80" y="70" width="10" height="6" fill="#ffaa00" opacity="0.8"/>
+                </svg>
+            </div>
+            
+            <p style="font-size: 0.85rem; color: #ffaa00; font-weight: 600; margin-bottom: 20px;">
+                Works on iOS 12+ (QuickLook) & Android (SceneViewer)
+            </p>
+            
+            <button class="close-modal-btn" id="close-modal-btn">CLOSE VIEWER</button>
+        </div>
+    </div>
+
+    <!-- Ambient light rays -->
+    <div class="ambient-light gold-light"></div>
+    <div class="ambient-light cyan-light"></div>
+
+    <!-- Custom Cursor -->
+    <div class="custom-cursor" id="custom-cursor"></div>
+    <div class="custom-cursor-follower" id="custom-cursor-follower"></div>
+
+    <footer class="credits-footer">
+        <p>© 2026 CST 19th Batch - Uva Wellassa University of Sri Lanka. All Rights Reserved.</p>
+    </footer>
+
+    <!-- Load the main shared script for cursor/stars and sub-script for 3D logic -->
+    <script src="script.js"></script>
+    <script>
+        // 3D Traditional Vesak Lantern Drawing System on Canvas
+        const viewerCanvas = document.getElementById('3d-lantern-canvas');
+        if (viewerCanvas) {
+            const ctx = viewerCanvas.getContext('2d');
+            
+            let canvasWidth, canvasHeight;
+            function resizeViewer() {
+                const rect = viewerCanvas.parentElement.getBoundingClientRect();
+                canvasWidth = rect.width - 40;
+                canvasHeight = rect.height - 40;
+                viewerCanvas.width = canvasWidth;
+                viewerCanvas.height = canvasHeight;
+            }
+            resizeViewer();
+            window.addEventListener('resize', resizeViewer);
+            
+            // Interaction State
+            let rotationAngleX = 0.3; // Tilt
+            let rotationAngleY = 0.5; // Yaw
+            let baseRotationSpeed = 0.01;
+            let currentRotationSpeedFactor = 1.0;
+            let currentGlowFactor = 5;
+            let scale = 1.0;
+            
+            // 3D coordinate list for a Traditional Sri Lankan Vesak Lantern
+            // Structure: Octahedral prism base + top/bottom pyramid tips
+            // We represent nodes as {x, y, z} and connect them with polygon panels
+            let nodes = [
+                { x: 0, y: -150, z: 0 },   // [0] Top Tip
+                
+                // Outer upper level ring of core (4 corners)
+                { x: -75, y: -40, z: -75 }, // [1] Front-Left
+                { x: 75, y: -40, z: -75 },  // [2] Front-Right
+                { x: 75, y: -40, z: 75 },   // [3] Back-Right
+                { x: -75, y: -40, z: 75 },  // [4] Back-Left
+                
+                // Outer lower level ring of core (4 corners)
+                { x: -75, y: 40, z: -75 },  // [5] Front-Left-Lower
+                { x: 75, y: 40, z: -75 },   // [6] Front-Right-Lower
+                { x: 75, y: 40, z: 75 },    // [7] Back-Right-Lower
+                { x: -75, y: 40, z: 75 },   // [8] Back-Left-Lower
+                
+                { x: 0, y: 150, z: 0 }     // [9] Bottom Tip
+            ];
+            
+            // Color profiles
+            const themeColors = {
+                golden: {
+                    baseHue: 35,
+                    border: 'rgba(255, 230, 160, 0.95)',
+                    lightCore: '#ffffff',
+                    faceGradient: ['#ff9900', '#ffa600', '#ffc44d', '#ff5500']
+                },
+                aurora: {
+                    baseHue: 345,
+                    border: 'rgba(255, 180, 200, 0.95)',
+                    lightCore: '#ffffff',
+                    faceGradient: ['#e91e63', '#ff4081', '#f50057', '#9c27b0']
+                },
+                cyber: {
+                    baseHue: 185,
+                    border: 'rgba(180, 255, 255, 0.95)',
+                    lightCore: '#ffffff',
+                    faceGradient: ['#00b0ff', '#00e5ff', '#18ffff', '#00e676']
+                },
+                cosmic: {
+                    baseHue: 280,
+                    border: 'rgba(230, 180, 255, 0.95)',
+                    lightCore: '#ffffff',
+                    faceGradient: ['#9c27b0', '#ba68c8', '#7b1fa2', '#3f51b5']
+                }
+            };
+            
+            let activeTheme = 'golden';
+            
+            // Polygon structures connecting specific node indices (8 triangular side panels, 4 central square faces, 1 bottom/top caps)
+            const faces = [
+                // Top pyramid cap (Triangles)
+                { indices: [0, 1, 2], fillStyleIndex: 0 },
+                { indices: [0, 2, 3], fillStyleIndex: 1 },
+                { indices: [0, 3, 4], fillStyleIndex: 2 },
+                { indices: [0, 4, 1], fillStyleIndex: 3 },
+                
+                // Central vertical square panels (represented as 2 triangles each for simple rendering)
+                { indices: [1, 5, 2], fillStyleIndex: 0 },
+                { indices: [2, 5, 6], fillStyleIndex: 1 },
+                
+                { indices: [2, 6, 3], fillStyleIndex: 1 },
+                { indices: [3, 6, 7], fillStyleIndex: 2 },
+                
+                { indices: [3, 7, 4], fillStyleIndex: 2 },
+                { indices: [4, 7, 8], fillStyleIndex: 3 },
+                
+                { indices: [4, 8, 1], fillStyleIndex: 3 },
+                { indices: [1, 8, 5], fillStyleIndex: 0 },
+                
+                // Bottom pyramid cap (Triangles)
+                { indices: [9, 6, 5], fillStyleIndex: 0 },
+                { indices: [9, 7, 6], fillStyleIndex: 1 },
+                { indices: [9, 8, 7], fillStyleIndex: 2 },
+                { indices: [9, 5, 8], fillStyleIndex: 3 }
+            ];
+
+            // Wavy traditional streamer (ralli) trails
+            let time = 0;
+
+            // Mouse Drag interaction
+            let isDragging = false;
+            let previousMouseX = 0;
+            let previousMouseY = 0;
+
+            viewerCanvas.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                previousMouseX = e.clientX;
+                previousMouseY = e.clientY;
+            });
+
+            window.addEventListener('mouseup', () => {
+                isDragging = false;
+            });
+
+            window.addEventListener('mousemove', (e) => {
+                if (isDragging) {
+                    const deltaX = e.clientX - previousMouseX;
+                    const deltaY = e.clientY - previousMouseY;
+                    
+                    rotationAngleY += deltaX * 0.007;
+                    rotationAngleX += deltaY * 0.007;
+                    
+                    previousMouseX = e.clientX;
+                    previousMouseY = e.clientY;
+                }
+            });
+
+            // Zoom Interaction
+            viewerCanvas.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                scale += e.deltaY * -0.001;
+                scale = Math.min(Math.max(0.5, scale), 1.6);
+            });
+
+            // Projection math function (3D to 2D screen coordinate projection)
+            function project(node) {
+                // Apply scale
+                let x = node.x * scale;
+                let y = node.y * scale;
+                let z = node.z * scale;
+                
+                // 1. Rotate around X axis (pitch)
+                const cosX = Math.cos(rotationAngleX);
+                const sinX = Math.sin(rotationAngleX);
+                let y1 = y * cosX - z * sinX;
+                let z1 = y * sinX + z * cosX;
+                
+                // 2. Rotate around Y axis (yaw)
+                const cosY = Math.cos(rotationAngleY);
+                const sinY = Math.sin(rotationAngleY);
+                let x2 = x * cosY - z1 * sinY;
+                let z2 = x * sinY + z1 * cosY;
+                
+                // Orthographic projection centered on canvas
+                return {
+                    x: x2 + canvasWidth / 2,
+                    y: y1 + canvasHeight / 2,
+                    z: z2 // Used for depth sorting (painter's algorithm)
+                };
+            }
+
+            // Main rendering loop for 3D lantern
+            function render3D() {
+                ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+                time += 0.03;
+                
+                // Apply auto-rotation if not dragging
+                if (!isDragging) {
+                    rotationAngleY += baseRotationSpeed * currentRotationSpeedFactor;
+                }
+                
+                // Projected nodes cache
+                const projectedNodes = nodes.map(project);
+                
+                // Depth sort faces based on average z-index of nodes (Painter's algorithm)
+                const sortedFaces = faces.map(face => {
+                    const zSum = face.indices.reduce((sum, idx) => sum + projectedNodes[idx].z, 0);
+                    return {
+                        ...face,
+                        averageZ: zSum / face.indices.length
+                    };
+                }).sort((a, b) => b.averageZ - a.averageZ); // Draw furthest first (large z is in background)
+
+                const theme = themeColors[activeTheme];
+
+                // 1. Draw glowing aura behind the entire 3D model
+                const radialGlow = ctx.createRadialGradient(
+                    canvasWidth/2, canvasHeight/2, 10,
+                    canvasWidth/2, canvasHeight/2, 220 * scale
+                );
+                radialGlow.addColorStop(0, `hsla(${theme.baseHue}, 100%, 60%, ${0.08 * currentGlowFactor})`);
+                radialGlow.addColorStop(0.5, `hsla(${theme.baseHue}, 100%, 55%, ${0.03 * currentGlowFactor})`);
+                radialGlow.addColorStop(1, 'rgba(0,0,0,0)');
+                ctx.fillStyle = radialGlow;
+                ctx.beginPath();
+                ctx.arc(canvasWidth/2, canvasHeight/2, 220 * scale, 0, Math.PI * 2);
+                ctx.fill();
+
+                // 2. Draw trailing traditional streamers (Ralli) attached to projected nodes
+                // Streamers hang from nodes [5], [6], [7], [8] (Lower ring) and [9] (Bottom tip)
+                const streamerIndices = [5, 6, 7, 8, 9];
+                ctx.save();
+                ctx.strokeStyle = theme.border;
+                ctx.lineWidth = 3.5 * scale;
+                ctx.lineCap = 'round';
+                
+                streamerIndices.forEach((nodeIdx, i) => {
+                    const startNode = projectedNodes[nodeIdx];
+                    ctx.beginPath();
+                    ctx.moveTo(startNode.x, startNode.y);
+                    
+                    const strLen = (nodeIdx === 9 ? 120 : 75) * scale;
+                    const waveAmt = 15 * scale * (nodeIdx === 9 ? 1.5 : 1);
+                    const waveOffset = Math.sin(time * 1.5 + i * 1.2) * waveAmt;
+                    
+                    ctx.bezierCurveTo(
+                        startNode.x + waveOffset * 0.4, startNode.y + strLen * 0.3,
+                        startNode.x - waveOffset * 0.4, startNode.y + strLen * 0.6,
+                        startNode.x + waveOffset, startNode.y + strLen
+                    );
+                    ctx.stroke();
+                    
+                    // Small decorative details at tips
+                    ctx.fillStyle = theme.faceGradient[0];
+                    ctx.beginPath();
+                    ctx.arc(startNode.x + waveOffset, startNode.y + strLen, 4 * scale, 0, Math.PI*2);
+                    ctx.fill();
+                });
+                ctx.restore();
+
+                // 3. Draw 3D solid lantern panels
+                sortedFaces.forEach(face => {
+                    ctx.beginPath();
+                    const p0 = projectedNodes[face.indices[0]];
+                    ctx.moveTo(p0.x, p0.y);
+                    
+                    for (let i = 1; i < face.indices.length; i++) {
+                        const pt = projectedNodes[face.indices[i]];
+                        ctx.lineTo(pt.x, pt.y);
+                    }
+                    ctx.closePath();
+                    
+                    // Create beautiful gradient shaded panel representing candlelight glow
+                    const pMinY = Math.min(...face.indices.map(idx => projectedNodes[idx].y));
+                    const pMaxY = Math.max(...face.indices.map(idx => projectedNodes[idx].y));
+                    
+                    const panelGrad = ctx.createLinearGradient(0, pMinY, 0, pMaxY);
+                    const c1 = theme.faceGradient[face.fillStyleIndex % theme.faceGradient.length];
+                    
+                    panelGrad.addColorStop(0, '#ffffff'); // Candleglow hot center spot
+                    panelGrad.addColorStop(0.35, c1);
+                    panelGrad.addColorStop(1, '#0e041d'); // Rich dark outer edges
+                    
+                    ctx.fillStyle = panelGrad;
+                    ctx.fill();
+                    
+                    // Highlight frame borders with golden/bright outlines
+                    ctx.strokeStyle = theme.border;
+                    ctx.lineWidth = 2.5 * scale;
+                    ctx.stroke();
+                });
+
+                // 4. Draw glowing candlelight core floating in exact center inside the model
+                ctx.save();
+                const centerGlow = ctx.createRadialGradient(
+                    canvasWidth/2, canvasHeight/2, 2,
+                    canvasWidth/2, canvasHeight/2, 60 * scale
+                );
+                centerGlow.addColorStop(0, theme.lightCore);
+                centerGlow.addColorStop(0.4, `hsla(${theme.baseHue}, 100%, 75%, 0.8)`);
+                centerGlow.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                
+                ctx.fillStyle = centerGlow;
+                ctx.beginPath();
+                ctx.arc(canvasWidth/2, canvasHeight/2, 60 * scale, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+                
+                requestAnimationFrame(render3D);
+            }
+            render3D();
+
+            // Interactive Color Theme triggers
+            const bubbles = document.querySelectorAll('.color-bubble');
+            const displayLabel = document.getElementById('theme-display-label');
+            
+            bubbles.forEach(bubble => {
+                bubble.addEventListener('click', () => {
+                    bubbles.forEach(b => b.classList.remove('active'));
+                    bubble.classList.add('active');
+                    
+                    activeTheme = bubble.getAttribute('data-theme');
+                    displayLabel.textContent = bubble.getAttribute('title');
+                    
+                    // Soft interactive feedback
+                    displayLabel.style.color = bubble.style.backgroundColor;
+                });
+            });
+
+            // Interactive Rotation Speed slider
+            const speedSlider = document.getElementById('rotation-speed-slider');
+            const speedVal = document.getElementById('speed-val');
+            
+            if (speedSlider && speedVal) {
+                speedSlider.addEventListener('input', () => {
+                    const factor = parseFloat(speedSlider.value) / 10;
+                    currentRotationSpeedFactor = factor;
+                    speedVal.textContent = `${factor.toFixed(1)}x`;
+                });
+            }
+
+            // Interactive Glow slider
+            const glowSlider = document.getElementById('glow-intensity-slider');
+            const glowVal = document.getElementById('glow-val');
+            
+            if (glowSlider && glowVal) {
+                glowSlider.addEventListener('input', () => {
+                    const intensity = parseInt(glowSlider.value);
+                    currentGlowFactor = intensity;
+                    
+                    let level = "Medium";
+                    if (intensity < 4) level = "Soft";
+                    else if (intensity > 6) level = "Superb Glow";
+                    else if (intensity === 5) level = "High";
+                    
+                    glowVal.textContent = level;
+                });
+            }
+            
+            // AR Scanner Modal Trigger
+            const arBtn = document.getElementById('ar-modal-btn');
+            const modal = document.getElementById('ar-modal');
+            const closeModal = document.getElementById('close-modal-btn');
+            
+            if (arBtn && modal && closeModal) {
+                arBtn.addEventListener('click', () => {
+                    modal.classList.add('active');
+                });
+                
+                closeModal.addEventListener('click', () => {
+                    modal.classList.remove('active');
+                });
+                
+                // Close if clicking overlay directly
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.classList.remove('active');
+                    }
+                });
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Vesak City | AR Vesak Zone</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@500;700;800&family=Outfit:wght@300;400;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Unique styles for Vesak City page */
+        .city-grid-container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 1200px;
+            padding: 100px 20px 40px 20px;
+            display: flex;
+            gap: 40px;
+            align-items: stretch;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .back-btn-container {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            z-index: 100;
+        }
+
+        .back-btn {
+            background: rgba(13, 6, 26, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 12px 24px;
+            border-radius: 50px;
+            color: #ffffff;
+            font-family: var(--font-sans);
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .back-btn:hover {
+            transform: translateX(-5px);
+            border-color: var(--color-neon-cyan);
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
+            color: var(--color-neon-cyan);
+        }
+
+        /* 3D Map Card Area */
+        .map-card {
+            flex: 1.3;
+            min-width: 320px;
+            min-height: 500px;
+            background: var(--glass-bg);
+            border: 1px solid rgba(0, 243, 255, 0.15);
+            border-radius: 28px;
+            position: relative;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .map-header {
+            padding: 25px 30px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .map-header-title {
+            font-family: var(--font-tech);
+            color: var(--color-neon-cyan);
+            font-size: 1.1rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+        }
+
+        .map-header-status {
+            background: rgba(0, 243, 255, 0.08);
+            border: 1px solid rgba(0, 243, 255, 0.2);
+            padding: 5px 12px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            color: var(--color-neon-cyan);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .pulse-circle {
+            width: 6px;
+            height: 6px;
+            background-color: var(--color-neon-cyan);
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 8px var(--color-neon-cyan);
+            animation: pulseCyan 1.5s infinite ease-in-out;
+        }
+
+        @keyframes pulseCyan {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
+        }
+
+        /* Map Interactive Body */
+        .map-body {
+            flex-grow: 1;
+            position: relative;
+            cursor: grab;
+        }
+
+        .map-body:active {
+            cursor: grabbing;
+        }
+
+        #cyber-map-canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        /* Information Details Sidebar */
+        .sidebar-card {
+            flex: 0.7;
+            min-width: 320px;
+            max-width: 420px;
+            background: var(--glass-bg);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 28px;
+            padding: 40px 35px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .sidebar-title-group {
+            margin-bottom: 25px;
+        }
+
+        .sidebar-subtitle {
+            font-family: var(--font-tech);
+            color: var(--color-neon-cyan);
+            font-size: 0.9rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+        }
+
+        .sidebar-title {
+            font-family: var(--font-sinhala);
+            font-size: 2.3rem;
+            font-weight: 700;
+            margin-top: 5px;
+            background: linear-gradient(180deg, #fff, #bcefff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Selected Node Details Display */
+        .details-container {
+            background: rgba(0, 243, 255, 0.02);
+            border: 1px solid rgba(0, 243, 255, 0.05);
+            border-radius: 18px;
+            padding: 25px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            min-height: 250px;
+        }
+
+        .details-empty-state {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .details-empty-state i {
+            font-size: 2.5rem;
+            color: var(--color-neon-cyan);
+            margin-bottom: 15px;
+            opacity: 0.5;
+            animation: bounceIcon 2s infinite ease-in-out;
+        }
+
+        @keyframes bounceIcon {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .details-content {
+            display: none;
+            animation: fadeInDetails 0.5s ease forwards;
+        }
+
+        @keyframes fadeInDetails {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .details-location-label {
+            font-family: var(--font-tech);
+            color: var(--color-neon-cyan);
+            font-size: 0.8rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .details-location-title {
+            font-family: var(--font-sinhala);
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 12px;
+        }
+
+        .details-location-desc {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .details-stat-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .stat-item {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 10px;
+            padding: 10px 12px;
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .stat-val {
+            font-family: var(--font-sans);
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: var(--color-neon-cyan);
+            margin-top: 3px;
+        }
+
+        /* 3D view city button */
+        .enter-city-btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--color-neon-cyan) 0%, var(--color-electric-blue) 100%);
+            border: none;
+            border-radius: 14px;
+            padding: 16px;
+            color: #000;
+            font-family: var(--font-tech);
+            font-weight: 700;
+            font-size: 0.95rem;
+            letter-spacing: 0.1em;
+            margin-top: 25px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0, 243, 255, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .enter-city-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(0, 243, 255, 0.45);
+            filter: brightness(1.1);
+        }
+
+        @media (max-width: 968px) {
+            .city-grid-container {
+                padding-top: 90px;
+                flex-direction: column;
+            }
+            .map-card {
+                min-height: 400px;
+                max-width: 100%;
+                width: 100%;
+            }
+            .sidebar-card {
+                max-width: 100%;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Back Navigation Button -->
+    <div class="back-btn-container">
+        <a href="index.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+            <span>Home</span>
+        </a>
+    </div>
+
+    <!-- Celestial Stars and Background -->
+    <div class="celestial-background">
+        <div id="stars-container"></div>
+        <div class="moon-glow-container">
+            <div class="full-moon"></div>
+            <div class="moon-beams"></div>
+        </div>
+    </div>
+
+    <!-- Subpage Main Content -->
+    <div class="city-grid-container">
+        
+        <!-- Left Panel: Interactive 3D/AR Map canvas -->
+        <div class="map-card">
+            <div class="map-header">
+                <span class="map-header-title">AR City Map Overlay</span>
+                <div class="map-header-status">
+                    <span class="pulse-circle"></span>
+                    <span>AR ZONE ONLINE</span>
+                </div>
+            </div>
+            
+            <div class="map-body">
+                <canvas id="cyber-map-canvas"></canvas>
+            </div>
+        </div>
+
+        <!-- Right Panel: Information & Location Details Sidebar -->
+        <div class="sidebar-card">
+            
+            <div class="sidebar-title-group">
+                <span class="sidebar-subtitle">Namunukula Digital Grid</span>
+                <h2 class="sidebar-title">වෙසක් කලාපය 3D</h2>
+                <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5; margin-top:10px;">
+                    ත්‍රිමාණ සිතියම මත ඇති නිල් පැහැති Glowing තිත් (AR Nodes) ක්ලික් කිරීමෙන් අදාළ ස්ථානවල තාක්‍ෂණික තොරතුරු සහ වෙසක් අසිරිය සජීවීව අත්විඳින්න.
+                </p>
+            </div>
+
+            <!-- Context Details Wrapper -->
+            <div class="details-container">
+                
+                <!-- State 1: Empty state (No node selected) -->
+                <div class="details-empty-state" id="empty-details">
+                    <i class="fa-solid fa-map-location-dot"></i>
+                    <p>Select a glowing AR Node on the cyber grid to load location intelligence details.</p>
+                </div>
+
+                <!-- State 2: Content loaded (Dynamic via script) -->
+                <div class="details-content" id="active-details">
+                    <div class="details-location-label" id="det-node-id">NODE :: AR_01</div>
+                    <h3 class="details-location-title" id="det-title">Entrance Thorana</h3>
+                    <p class="details-location-desc" id="det-desc">
+                        නමුණුකුල වෙසක් කලාපයේ ආරම්භය සනිටුහන් කරන, උසින් අඩි 50ක් වූ දැවැන්ත ඩිජිටල් තොරණකි. මෙය CST 19 වන කණ්ඩායම විසින් AR තාක්‍ෂණයෙන් සක්‍රීය කර ඇත.
+                    </p>
+                    
+                    <div class="details-stat-grid">
+                        <div class="stat-item">
+                            <span class="stat-label">AR Assets</span>
+                            <div class="stat-val" id="det-assets">12 Objects</div>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Tech Layer</span>
+                            <div class="stat-val" id="det-tech">WebGL / LiDAR</div>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Visitor Count</span>
+                            <div class="stat-val" id="det-visitors">14.2K Scans</div>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Interactive</span>
+                            <div class="stat-val" id="det-interactive">Sound / Lights</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Simulation Trigger -->
+            <button class="enter-city-btn" onclick="alert('Entering fully immersive 3D WebGL WebXR simulation...');">
+                <i class="fa-solid fa-vr-cardboard"></i>
+                <span>ENTER VIRTUAL TOUR (3D)</span>
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- Ambient light rays -->
+    <div class="ambient-light gold-light"></div>
+    <div class="ambient-light cyan-light"></div>
+
+    <!-- Custom Cursor -->
+    <div class="custom-cursor" id="custom-cursor"></div>
+    <div class="custom-cursor-follower" id="custom-cursor-follower"></div>
+
+    <footer class="credits-footer">
+        <p>© 2026 CST 19th Batch - Uva Wellassa University of Sri Lanka. All Rights Reserved.</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="script.js"></script>
+    <script>
+        // Interactive Vector-Grid Cyber Map on Canvas
+        const mapCanvas = document.getElementById('cyber-map-canvas');
+        if (mapCanvas) {
+            const ctx = mapCanvas.getContext('2d');
+            
+            let canvasWidth, canvasHeight;
+            
+            function resizeMap() {
+                const rect = mapCanvas.parentElement.getBoundingClientRect();
+                canvasWidth = rect.width;
+                canvasHeight = rect.height;
+                mapCanvas.width = canvasWidth;
+                mapCanvas.height = canvasHeight;
+            }
+            resizeMap();
+            window.addEventListener('resize', resizeMap);
+            
+            // Map Database (Interactive Points of Interest in Namunukula Vesak Zone)
+            const mapNodes = [
+                {
+                    id: "AR_01",
+                    title: "නමුණුකුල ප්‍රධාන ඩිජිටල් තොරණ",
+                    label: "MAIN PANDOL (THORANA)",
+                    x: 0.18, // Normalized Coordinates
+                    y: 0.72,
+                    assets: "18 Models",
+                    tech: "LiDAR / Polycam",
+                    visitors: "8,920 Scans",
+                    interactive: "Light Control",
+                    desc: "නමුණුකුල වෙසක් කලාපයේ පිවිසුම් දොරටුව සරසන දැවැන්ත ඩිජිටල් තොරණකි. මෙය traditional ශ්‍රී ලාංකීය කැටයම් සමඟ modern ත්‍රිමාණ සජීවීකරණයන්ගෙන් සමන්විතය."
+                },
+                {
+                    id: "AR_02",
+                    title: "මහා පහන් කූඩු ප්‍රදර්ශනය",
+                    label: "GIANT VESAK KOODU",
+                    x: 0.52,
+                    y: 0.42,
+                    assets: "24 Shaders",
+                    tech: "ThreeJS / Custom Canvas",
+                    visitors: "14,350 Scans",
+                    interactive: "Theme Selector",
+                    desc: "කලාපය මධ්‍යයේ ඇති සුවිශාල කැරකෙන ප්‍රධාන වෙසක් පහන් කූඩුව සහ ඒ වටා ඇති කුඩා වෙසක් කූඩු 108 කින් යුත් සුවිශේෂී ආලෝක සංදර්ශනයකි."
+                },
+                {
+                    id: "AR_03",
+                    title: "CST 19 වන කණ්ඩායම් AR කුටිය",
+                    label: "CST 19 BATCH AR ZONE",
+                    x: 0.78,
+                    y: 0.65,
+                    assets: "52 AR Overlays",
+                    tech: "8th Wall / WebXR",
+                    visitors: "21,050 Scans",
+                    interactive: "Virtual Reality Camera",
+                    desc: "කලාපයට පැමිණෙන ඕනෑම අයෙකුට තම ජංගම දුරකථනයෙන් QR කේත ස්කෑන් කර, CST 19 කණ්ඩායම විසින් සකසන ලද ත්‍රිමාණ වෙසක් සිතුවම් සහ සුභපැතුම් කාඩ්පත් සජීවීව අත්විඳිය හැකි කලාපයයි."
+                },
+                {
+                    id: "AR_04",
+                    title: "නමුණුකුල පෝය කඳු මුදුන නැරඹුම් කලාපය",
+                    label: "POYA VIEW LOOKOUT",
+                    x: 0.42,
+                    y: 0.18,
+                    assets: "Skybox Overlay",
+                    tech: "Panoramic 8K / WebGL",
+                    visitors: "4,210 Scans",
+                    interactive: "Camera Tilt",
+                    desc: "නමුණුකුල කන්ද මුදුනේ සිට පෝය දින වෙසක් හඳ සහ මුළු පළාතම ආලෝකයෙන් බැබළෙන ආකාරය අංශක 360ක පරිදර්ශන ඡායාරූප (Panoramic views) ඔස්සේ නැරඹිය හැකි කලාපයකි."
+                }
+            ];
+
+            let selectedNode = null;
+            let hoveredNode = null;
+            
+            // Camera Pan settings for dragging effect
+            let cameraX = 0;
+            let cameraY = 0;
+            let isPanning = false;
+            let startPanX = 0;
+            let startPanY = 0;
+
+            mapCanvas.addEventListener('mousedown', (e) => {
+                isPanning = true;
+                const rect = mapCanvas.getBoundingClientRect();
+                startPanX = e.clientX - rect.left - cameraX;
+                startPanY = e.clientY - rect.top - cameraY;
+            });
+
+            window.addEventListener('mouseup', () => {
+                isPanning = false;
+            });
+
+            mapCanvas.addEventListener('mousemove', (e) => {
+                const rect = mapCanvas.getBoundingClientRect();
+                const mouseCanvasX = e.clientX - rect.left;
+                const mouseCanvasY = e.clientY - rect.top;
+
+                if (isPanning) {
+                    cameraX = mouseCanvasX - startPanX;
+                    cameraY = mouseCanvasY - startPanY;
+                    
+                    // Constrain panning to sensible limits
+                    cameraX = Math.min(Math.max(-canvasWidth * 0.5, cameraX), canvasWidth * 0.5);
+                    cameraY = Math.min(Math.max(-canvasHeight * 0.5, cameraY), canvasHeight * 0.5);
+                } else {
+                    // Check if mouse is hovering over any AR Nodes
+                    let found = null;
+                    mapNodes.forEach(node => {
+                        const px = node.x * canvasWidth + cameraX;
+                        const py = node.y * canvasHeight + cameraY;
+                        
+                        const dx = mouseCanvasX - px;
+                        const dy = mouseCanvasY - py;
+                        const dist = Math.sqrt(dx*dx + dy*dy);
+                        
+                        if (dist < 18) {
+                            found = node;
+                        }
+                    });
+                    hoveredNode = found;
+                }
+            });
+
+            mapCanvas.addEventListener('click', (e) => {
+                if (isPanning && Math.abs(e.clientX - rect.left - cameraX - startPanX) > 5) return; // Ignore drag clicks
+                
+                const rect = mapCanvas.getBoundingClientRect();
+                const clickX = e.clientX - rect.left;
+                const clickY = e.clientY - rect.top;
+
+                let clickedNode = null;
+                mapNodes.forEach(node => {
+                    const px = node.x * canvasWidth + cameraX;
+                    const py = node.y * canvasHeight + cameraY;
+                    
+                    const dx = clickX - px;
+                    const dy = clickY - py;
+                    const dist = Math.sqrt(dx*dx + dy*dy);
+                    
+                    if (dist < 18) {
+                        clickedNode = node;
+                    }
+                });
+
+                if (clickedNode) {
+                    selectNode(clickedNode);
+                }
+            });
+
+            // UI Interaction triggers
+            const emptyDetailsEl = document.getElementById('empty-details');
+            const activeDetailsEl = document.getElementById('active-details');
+            
+            const detNodeId = document.getElementById('det-node-id');
+            const detTitle = document.getElementById('det-title');
+            const detDesc = document.getElementById('det-desc');
+            const detAssets = document.getElementById('det-assets');
+            const detTech = document.getElementById('det-tech');
+            const detVisitors = document.getElementById('det-visitors');
+            const detInteractive = document.getElementById('det-interactive');
+
+            function selectNode(node) {
+                selectedNode = node;
+                
+                emptyDetailsEl.style.display = 'none';
+                activeDetailsEl.style.display = 'block';
+                
+                detNodeId.textContent = `NODE :: ${node.id}`;
+                detTitle.textContent = node.title;
+                detDesc.textContent = node.desc;
+                detAssets.textContent = node.assets;
+                detTech.textContent = node.tech;
+                detVisitors.textContent = node.visitors;
+                detInteractive.textContent = node.interactive;
+            }
+
+            // Map Rendering Loop
+            let frame = 0;
+            function renderMap() {
+                frame++;
+                ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+                
+                // 1. Draw glowing background grid (Perspective / Sci-Fi layout)
+                ctx.strokeStyle = 'rgba(0, 243, 255, 0.04)';
+                ctx.lineWidth = 1;
+                
+                const gridSpacing = 40;
+                const offsetX = cameraX % gridSpacing;
+                const offsetY = cameraY % gridSpacing;
+                
+                for (let x = offsetX; x < canvasWidth; x += gridSpacing) {
+                    ctx.beginPath();
+                    ctx.moveTo(x, 0);
+                    ctx.lineTo(x, canvasHeight);
+                    ctx.stroke();
+                }
+                
+                for (let y = offsetY; y < canvasHeight; y += gridSpacing) {
+                    ctx.beginPath();
+                    ctx.moveTo(0, y);
+                    ctx.lineTo(canvasWidth, y);
+                    ctx.stroke();
+                }
+                
+                // 2. Draw cyber road network grid linking Namunukula mountains
+                ctx.save();
+                ctx.strokeStyle = 'rgba(0, 243, 255, 0.12)';
+                ctx.lineWidth = 2.5;
+                ctx.setLineDash([8, 6]);
+                
+                ctx.beginPath();
+                // Draw connecting roads between the nodes
+                for (let i = 0; i < mapNodes.length - 1; i++) {
+                    const n1 = mapNodes[i];
+                    const n2 = mapNodes[i+1];
+                    ctx.moveTo(n1.x * canvasWidth + cameraX, n1.y * canvasHeight + cameraY);
+                    ctx.lineTo(n2.x * canvasWidth + cameraX, n2.y * canvasHeight + cameraY);
+                }
+                ctx.stroke();
+                ctx.restore();
+                
+                // 3. Render all interactive AR Map Nodes
+                mapNodes.forEach(node => {
+                    const px = node.x * canvasWidth + cameraX;
+                    const py = node.y * canvasHeight + cameraY;
+                    
+                    const isSelected = selectedNode && selectedNode.id === node.id;
+                    const isHovered = hoveredNode && hoveredNode.id === node.id;
+                    
+                    // Draw outer pulsing concentric ring
+                    const pulseRadius = 18 + Math.sin(frame * 0.08 + node.x * 100) * 4;
+                    ctx.strokeStyle = isSelected 
+                        ? 'rgba(0, 243, 255, 0.9)' 
+                        : (isHovered ? 'rgba(0, 243, 255, 0.7)' : 'rgba(0, 243, 255, 0.25)');
+                    
+                    ctx.lineWidth = isSelected ? 2.5 : 1.5;
+                    ctx.beginPath();
+                    ctx.arc(px, py, pulseRadius, 0, Math.PI * 2);
+                    ctx.stroke();
+                    
+                    // Draw glowing center dot
+                    ctx.fillStyle = isSelected 
+                        ? '#ffffff' 
+                        : (isHovered ? 'var(--color-neon-cyan)' : 'rgba(0, 243, 255, 0.6)');
+                    
+                    ctx.shadowColor = 'var(--color-neon-cyan)';
+                    ctx.shadowBlur = isSelected || isHovered ? 18 : 6;
+                    
+                    ctx.beginPath();
+                    ctx.arc(px, py, isSelected ? 8 : 6, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    ctx.shadowBlur = 0; // Reset shadow for other parts
+                    
+                    // Draw node label tags
+                    ctx.fillStyle = isSelected ? '#ffffff' : 'rgba(255,255,255,0.7)';
+                    ctx.font = '500 10px var(--font-tech)';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(node.label, px, py - pulseRadius - 8);
+                });
+                
+                requestAnimationFrame(renderMap);
+            }
+            renderMap();
+        }
+    </script>
+</body>
+</html>
