@@ -6,38 +6,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Namunukula Vesak Sada | AR Vesak Zone - CST 19th Batch</title>
 
-    <!-- SEO Meta Tags -->
     <meta name="description"
         content="Welcome to the AR Vesak Zone presented by CST 19th Batch. Experience the majestic beauty of Namunukula Vesak Sada with interactive augmented reality Vesak lanterns and digital city experiences.">
-    <meta name="keywords"
-        content="Vesak, AR Vesak Zone, Namunukula Vesak Sada, CST 19th Batch, Sri Lanka, Vesak Lantern, Vesak City, 3D Vesak">
-    <meta name="author" content="CST 19th Batch">
 
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="නමුණුකුල, වෙසක් සඳ | AR Vesak Zone">
-    <meta property="og:description"
-        content="Experience the majestic beauty of Namunukula Vesak Sada with interactive augmented reality Vesak lanterns and digital city experiences.">
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@500;700;800&family=Outfit:wght@300;400;600;700&family=Orbitron:wght@500;700;900&family=Yatra+One&display=swap" rel="stylesheet">
 
-    <!-- Google Fonts for premium typography -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@500;700;800&family=Outfit:wght@300;400;600;700&family=Orbitron:wght@500;700;900&family=Yatra+One&display=swap"
-        rel="stylesheet">
-
-    <!-- FontAwesome for icons -->
+    <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- Custom Stylesheet -->
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-
-
-    <!-- Starfield and Interactive Canvas Background -->
     <div class="celestial-background">
         <div id="stars-container"></div>
         <div class="moon-glow-container">
@@ -47,156 +29,104 @@
         <canvas id="lanterns-canvas"></canvas>
     </div>
 
-    <!-- Main Content Container -->
     <main class="hero-container">
         <div class="glass-card-wrapper">
             <div class="glass-card">
 
-                <!-- Batch Tag / Sub-header -->
                 <div class="tech-badge-container">
                     <span class="tech-badge">
-                        <span class="badge-dot"></span>
-                        CST 19<span class="superscript">th</span> Batch Presentation
+                        CST 19th Batch Presentation
                     </span>
                 </div>
 
-                <!-- Main Title: Beautiful Sinhala Font -->
                 <h1 class="sinhala-title">
                     <span class="gold-gradient-text">නමුණුකුල</span>
-                    <span class="sinhala-separator"></span>
                     <span class="gold-gradient-text">වෙසක් සඳ</span>
                 </h1>
 
-                <!-- Sub-title: AR Vesak Zone -->
                 <div class="ar-title-wrapper">
                     <h2 class="ar-title">
-                        <span class="text-white">AR</span>
-                        <span class="neon-cyan-text">VESAK</span>
-                        <span class="text-glow-purple">ZONE</span>
+                        AR VESAK ZONE
                     </h2>
                 </div>
 
-                <!-- Ornamental Divider -->
-                <div class="ornamental-divider">
-                    <div class="divider-line"></div>
-                    <div class="divider-center">
-                        <i class="fa-solid fa-dharmachakra"></i>
-                    </div>
-                    <div class="divider-line"></div>
-                </div>
-
-                <!-- Description / Welcome Note -->
                 <p class="hero-description">
-                    නමුණුකුල කඳු වැටියෙන් සිසිල් වන, ශ්‍රී ලාංකීය ඓතිහාසික වෙසක් අසිරිය, නවීන තාක්‍ෂණික සීමාවන් පසු
-                    කරමින් Augmented Reality (AR) තාක්‍ෂණය ඔස්සේ ඩිජිටල් ලෙස අත්විඳින්න.
+                    නවීන AR තාක්ෂණයෙන් වෙසක් අත්විඳින්න.
                 </p>
 
-                <!-- Navigation Action Buttons -->
+                <!-- ✅ BUTTONS UPDATED -->
                 <div class="actions-container">
 
-                    <!-- Vesak Lantern Button -->
-                    <a href="lantern.html" class="action-btn lantern-btn" id="btn-lantern">
-                        <div class="btn-glow-layer"></div>
-                        <div class="btn-content">
-                            <span class="btn-icon">
-                                <svg viewBox="0 0 100 100" class="btn-svg-lantern">
-                                    <!-- A stylized traditional Sri Lankan Vesak Lantern SVG -->
-                                    <path d="M 50 15 L 75 35 L 75 65 L 50 85 L 25 65 L 25 35 Z" fill="none"
-                                        stroke="currentColor" stroke-width="4" stroke-linejoin="round" />
-                                    <path d="M 50 15 L 50 85" fill="none" stroke="currentColor" stroke-width="2" />
-                                    <path d="M 25 35 L 75 35" fill="none" stroke="currentColor" stroke-width="2" />
-                                    <path d="M 25 65 L 75 65" fill="none" stroke="currentColor" stroke-width="2" />
-                                    <!-- Waving streamers/tassels at bottom corners -->
-                                    <path d="M 25 65 L 20 85 M 75 65 L 80 85 M 50 85 L 50 98" fill="none"
-                                        stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                                    <!-- Inner glowing core -->
-                                    <circle cx="50" cy="50" r="10" fill="currentColor" class="glowing-core" />
-                                </svg>
-                            </span>
-                            <div class="btn-text-area">
-                                <span class="btn-main-label">Vesak Lantern</span>
-                                <span class="btn-sub-label">වෙසක් කූඩුව AR</span>
-                            </div>
-                        </div>
-                        <i class="fa-solid fa-chevron-right arrow-indicator"></i>
+                    <!-- Lantern -->
+                    <a href="#" class="action-btn lantern-btn" id="btn-lantern">
+                        <span>Vesak Lantern</span>
                     </a>
 
-                    <!-- Vesak City Button -->
-                    <a href="https://cstarvesakcity.vercel.app/" target="_blank" rel="noopener noreferrer"
-                        class="action-btn city-btn" id="btn-city">
-                        <div class="btn-glow-layer"></div>
-                        <div class="btn-content">
-                            <span class="btn-icon">
-                                <svg viewBox="0 0 100 100" class="btn-svg-city">
-                                    <!-- A modern glowing 3D/AR City grid & buildings icon -->
-                                    <rect x="25" y="45" width="12" height="35" fill="none" stroke="currentColor"
-                                        stroke-width="4" />
-                                    <rect x="42" y="25" width="16" height="55" fill="none" stroke="currentColor"
-                                        stroke-width="4" />
-                                    <rect x="63" y="38" width="12" height="42" fill="none" stroke="currentColor"
-                                        stroke-width="4" />
-                                    <path d="M 15 80 L 85 80" stroke="currentColor" stroke-width="4"
-                                        stroke-linecap="round" />
-                                    <!-- Cyber grid perspective lines representing AR zone -->
-                                    <path
-                                        d="M 20 80 L 10 95 M 35 80 L 30 95 M 50 80 L 50 95 M 65 80 L 70 95 M 80 80 L 90 95"
-                                        stroke="currentColor" stroke-width="2" stroke-opacity="0.6" />
-                                </svg>
-                            </span>
-                            <div class="btn-text-area">
-                                <span class="btn-main-label">Vesak City</span>
-                                <span class="btn-sub-label">වෙසක් කලාපය AR</span>
-                            </div>
-                        </div>
-                        <i class="fa-solid fa-chevron-right arrow-indicator"></i>
+                    <!-- City -->
+                    <a href="#" class="action-btn city-btn" id="btn-city">
+                        <span>Vesak City</span>
                     </a>
 
-                </div>
-
-                <!-- AR Instructions Section -->
-                <div class="ar-instructions-box">
-                    <h3 class="instructions-header">
-                        <i class="fa-solid fa-circle-info"></i> How to View in AR (භාවිතා කරන්නේ කෙසේද?)
-                    </h3>
-                    <div class="instructions-grid">
-                        <div class="instruction-column">
-                            <span class="os-tag ios-tag"><i class="fa-brands fa-apple"></i> iOS Users</span>
-                            <p>Download and use the <strong>XRViewer</strong> app from App Store to launch and project
-                                the AR Vesak Zone.</p>
-                        </div>
-                        <div class="instruction-column">
-                            <span class="os-tag android-tag"><i class="fa-brands fa-android"></i> Android</span>
-                            <p>Use Google <strong>Chrome Browser</strong> directly with WebXR compatibility enabled to
-                                view the Vesak zone.</p>
-                        </div>
-                    </div>
-                    <div class="common-instructions">
-                        <p>
-                            <i class="fa-solid fa-wand-magic-sparkles"></i>
-                            <span><strong>AR Projection Tip:</strong> Clean your mobile camera lens, move to a well-lit
-                                space, and aim at a flat, clear surface to scan and place the Vesak models.</span>
-                        </p>
-                    </div>
                 </div>
 
             </div>
         </div>
     </main>
 
-    <!-- Ambient Light Rays for immersive background depth -->
-    <div class="ambient-light gold-light"></div>
-    <div class="ambient-light cyan-light"></div>
-
-    <!-- Premium custom cursor container for non-touch screens -->
-    <div class="custom-cursor" id="custom-cursor"></div>
-    <div class="custom-cursor-follower" id="custom-cursor-follower"></div>
-
     <footer class="credits-footer">
-        <p>© 2026 CST 19th Batch - Uva Wellassa University of Sri Lanka. All Rights Reserved.</p>
+        <p>© 2026 CST 19th Batch</p>
     </footer>
 
-    <!-- Custom Script -->
-    <script src="script.js"></script>
-</body>
+    <!-- ========================= -->
+    <!-- ✅ AR SCRIPT ADDED HERE -->
+    <!-- ========================= -->
+    <script>
+        function isIOS() {
+            return /iPhone|iPad|iPod/i.test(navigator.userAgent);
+        }
 
+        function isAndroid() {
+            return /Android/i.test(navigator.userAgent);
+        }
+
+        const LANTERN_URL = "lantern.html";
+        const CITY_URL = "https://cstarvesakcity.vercel.app/";
+        const XRVIEWER_SCHEME = "xrviewer://";
+
+        document.getElementById("btn-lantern").addEventListener("click", function (e) {
+            e.preventDefault();
+            handleAR(LANTERN_URL);
+        });
+
+        document.getElementById("btn-city").addEventListener("click", function (e) {
+            e.preventDefault();
+            handleAR(CITY_URL);
+        });
+
+        function handleAR(url) {
+
+            if (isIOS()) {
+
+                const openApp = confirm("Open in XRViewer app?");
+
+                if (openApp) {
+                    window.location.href = XRVIEWER_SCHEME;
+
+                    setTimeout(() => {
+                        alert("If XRViewer didn't open, install it from App Store.");
+                    }, 1500);
+                }
+
+            } else if (isAndroid()) {
+
+                window.open(url, "_blank");
+
+            } else {
+
+                window.open(url, "_blank");
+            }
+        }
+    </script>
+
+</body>
 </html>
