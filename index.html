@@ -6,13 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Namunukula Vesak Sada | AR Vesak Zone - CST 19th Batch</title>
 
-    <!-- SEO Meta Tags -->
     <meta name="description"
         content="Welcome to the AR Vesak Zone presented by CST 19th Batch. Experience the majestic beauty of Namunukula Vesak Sada with interactive augmented reality Vesak lanterns and digital city experiences.">
 
     <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@500;700;800&family=Outfit:wght@300;400;600;700&family=Orbitron:wght@500;700;900&family=Yatra+One&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@500;700;800&family=Outfit:wght@300;400;600;700&family=Orbitron:wght@500;700;900&family=Yatra+One&display=swap" rel="stylesheet">
 
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -22,7 +20,6 @@
 
 <body>
 
-    <!-- Background -->
     <div class="celestial-background">
         <div id="stars-container"></div>
         <div class="moon-glow-container">
@@ -32,59 +29,42 @@
         <canvas id="lanterns-canvas"></canvas>
     </div>
 
-    <!-- Main -->
     <main class="hero-container">
         <div class="glass-card-wrapper">
             <div class="glass-card">
 
                 <div class="tech-badge-container">
                     <span class="tech-badge">
-                        <span class="badge-dot"></span>
                         CST 19th Batch Presentation
                     </span>
                 </div>
 
                 <h1 class="sinhala-title">
                     <span class="gold-gradient-text">නමුණුකුල</span>
-                    <span class="sinhala-separator"></span>
                     <span class="gold-gradient-text">වෙසක් සඳ</span>
                 </h1>
 
                 <div class="ar-title-wrapper">
                     <h2 class="ar-title">
-                        <span class="text-white">AR</span>
-                        <span class="neon-cyan-text">VESAK</span>
-                        <span class="text-glow-purple">ZONE</span>
+                        AR VESAK ZONE
                     </h2>
                 </div>
 
-                <div class="ornamental-divider">
-                    <div class="divider-line"></div>
-                    <div class="divider-center">
-                        <i class="fa-solid fa-dharmachakra"></i>
-                    </div>
-                    <div class="divider-line"></div>
-                </div>
-
                 <p class="hero-description">
-                    නමුණුකුල කඳු වැටියෙන් සිසිල් වන වෙසක් අත්විඳින්න AR තාක්ෂණයෙන්.
+                    නවීන AR තාක්ෂණයෙන් වෙසක් අත්විඳින්න.
                 </p>
 
-                <!-- ✅ BUTTONS (UPDATED ONLY href) -->
+                <!-- ✅ BUTTONS UPDATED -->
                 <div class="actions-container">
 
                     <!-- Lantern -->
                     <a href="#" class="action-btn lantern-btn" id="btn-lantern">
-                        <div class="btn-content">
-                            <span class="btn-main-label">Vesak Lantern</span>
-                        </div>
+                        <span>Vesak Lantern</span>
                     </a>
 
                     <!-- City -->
                     <a href="#" class="action-btn city-btn" id="btn-city">
-                        <div class="btn-content">
-                            <span class="btn-main-label">Vesak City</span>
-                        </div>
+                        <span>Vesak City</span>
                     </a>
 
                 </div>
@@ -94,16 +74,11 @@
     </main>
 
     <footer class="credits-footer">
-        <p>© 2026 CST 19th Batch - Uva Wellassa University of Sri Lanka.</p>
+        <p>© 2026 CST 19th Batch</p>
     </footer>
 
     <!-- ========================= -->
-    <!-- ✅ YOUR ORIGINAL SCRIPT -->
-    <!-- ========================= -->
-    <script src="script.js"></script>
-
-    <!-- ========================= -->
-    <!-- ✅ AR DEVICE LOGIC ADDED -->
+    <!-- ✅ AR SCRIPT ADDED HERE -->
     <!-- ========================= -->
     <script>
         function isIOS() {
@@ -132,7 +107,7 @@
 
             if (isIOS()) {
 
-                const openApp = confirm("Open in XRViewer app?\n\n(Required for AR on iPhone)");
+                const openApp = confirm("Open in XRViewer app?");
 
                 if (openApp) {
                     window.location.href = XRVIEWER_SCHEME;
@@ -154,5 +129,4 @@
     </script>
 
 </body>
-
 </html>
